@@ -113,40 +113,116 @@ int GetLength(List L)
     return i;
 }
 
+void PrintLots(List L, List P)
+{
+    int i = 0;
+    Node *p1, *p2;
+    p1 = L->Next;
+    p2 = P->Next;
+    while (p2 != NULL)
+    {
+        while (i != p2->Element && p1 != NULL)
+        {
+            i++;
+            p1 = p1->Next;
+        }
+        if (p1 == NULL)
+        {
+            break;
+        }
+        printf("%d ", p1->Element);
+        p2 = p2->Next;
+    }
+    printf("\n");
+}
+
+List intersect(List L, List P)
+{
+    Node *p1 = L->Next;
+    Node *p2 = P->Next;
+    Node *s, *p;
+    Node *h = (Node*)malloc(sizeof(Node));
+    h->Element = -1;
+    h->Next = NULL;
+    p = h;
+    while (p1 != NULL && p2 != NULL)
+    {
+        while (p1->Element < p2->Element)
+        {
+            p1 = p1->Next;
+            if (p1 == NULL)
+            {
+                return h;
+            }
+        }
+        while (p2->Element < p1->Element)
+        {
+            p2 = p2->Next;
+            if (p2 == NULL)
+            {
+                return h;
+            }
+        }
+        s = (Node*)malloc(sizeof(Node));
+        s->Element = p1->Element;
+        s->Next = NULL;
+        p->Next = s;
+        p = p->Next;
+        p1 = p1->Next;
+        p2 = p2->Next;
+    }
+    return h;
+}
+
+List TakeUnion(List L, List P)
+{
+    Node *h, *p, *p1, *p2, *s;
+    h = (Node*)malloc(sizeof(Node));
+    h->Element = -1;
+    h->Next = NULL;
+    p = h;
+    p1 = L->Next;
+    p2 = P->Next;
+    while (p1 != NULL || p2 != NULL)
+    {
+        if (p1 == NULL || p1->Element > p2->Element)
+        {
+            s = (Node*)malloc(sizeof(Node));
+            s->Element = p2->Element;
+            s->Next = NULL;
+            p->Next = s;
+            p = p->Next;
+            p2 = p2->Next;
+        }
+        if (p2 == NULL || p1->Element <= p2->Element)
+        {
+            s = (Node*)malloc(sizeof(Node));
+            s->Element = p1->Element;
+            s->Next = NULL;
+            p->Next = s;
+            p = p->Next;
+            if (p2 != NULL && p2->Element == p1->Element)
+            {
+                p2 = p2->Next;
+            }
+            p1 = p1->Next;
+        }
+    }
+    return h;
+}
+
 int main()
 {
-    List list0;
-    int n;
-    printf("Create a new List:\n\n");
-
-    printf("Type the length:");
-    scanf("%d", &n);
-    list0 = create(n);
-
-    printf("\n");
-    traversal(list0);
-
-    printf("\n");
-    printf("Is it empty?\n");
-    printf("%d", IsEmpty(list0));
-
-    printf("\n");
-    Insert(list0, 4, 20);
-    printf("Insert value 20 into position 4.\n");
-    traversal(list0);
-
-    printf("\n");
-    DeleteByIndex(list0, 0);
-    printf("Delete the node whose index is 0.\n");
-    traversal(list0);
-
-    printf("\n");
-    DeleteByValue(list0, 4);
-    printf("Delete all the node whose value is 4.\n");
-    traversal(list0);
-
-    printf("\n");
-    n = GetLength(list0);
-    printf("The length of the list: %d.\n", n);
+    List L, P, IList, UList;
+    int Ln, Pn;
+    scanf("%d", &Ln);
+    L = create(Ln);
+    scanf("%d", &Pn);
+    P = create(Pn);
+    PrintLots(L, P);
+    IList = intersect(L, P);
+    traversal(IList);
+    UList = TakeUnion(L, P);
+    traversal(UList);
     return 0;
 }
