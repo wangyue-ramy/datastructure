@@ -68,22 +68,56 @@ void traversal(Stack S)
     printf("\n");
 }
 
+int NotBracket(char ch)
+{
+    int i;
+    char list[] = {'(', ')', '[', ']', '{', '}'};
+    for (i = 0; i < 6; i++)
+    {
+        if (ch == list[i])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int CheckBalance(char *s)
+{
+    int i = 1;
+    Stack stack0;
+    stack0 = create(0);
+    if (!NotBracket(s[0]))
+    {
+        push(stack0, s[0]);
+    }
+    while (s[i] != '\0')
+    {
+        if (NotBracket(s[i]))
+        {
+            i++;
+            continue;
+        }
+        if (s[i] == '(' || s[i] == '[' || s[i] == '{')
+        {
+            push(stack0, s[i]);
+        } else {
+            if ((s[i] == ')' && top(stack0) == '(') || (s[i] == ']' && top(stack0) == '[') || (s[i] == '}' && top(stack0) == '{'))
+            {
+                pop(stack0);
+            } else {
+                return 0;
+            }
+        }
+        i++;
+    }
+    return IsEmpty(stack0);
+}
+
 int main()
 {
-    int n;
-    Stack stack0;
-    scanf("%d", &n);
-    stack0 = create(n);
-    traversal(stack0);
-    printf("%d\n", top(stack0));
-
-    push(stack0, 8);
-    traversal(stack0);
-    printf("%d\n", top(stack0));
-
-    pop(stack0);
-    traversal(stack0);
-    printf("%d\n", top(stack0));
-
+    char s[10];
+    scanf("%s", s);
+    printf("%d", CheckBalance(s));
     return 0;
 }
